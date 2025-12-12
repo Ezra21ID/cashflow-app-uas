@@ -28,20 +28,31 @@ Aplikasi ini memungkinkan pengguna untuk mencatat pemasukan dan pengeluaran seca
 
 Ikuti langkah-langkah berikut untuk menjalankan proyek ini di mesin lokal Anda.
 
-### 1. Prasyarat (Requirements)
-Pastikan komputer Anda sudah terinstal:
-* **Flutter SDK** (Versi terbaru).
-* **Git** (Untuk mengunduh repository).
-* **Android Studio / VS Code** (Dengan ekstensi Flutter).
-* **Emulator Android** atau Perangkat Fisik yang terhubung.
+### 1. Prasyarat
+* **Flutter SDK** terinstal ([Panduan Instalasi](https://docs.flutter.dev/get-started/install)).
+* **Git** terinstal.
+* **Emulator Android/iOS** atau Perangkat Fisik (Debugging aktif).
+* **Koneksi Internet** (Wajib, untuk akses Firebase).
 
-### 2. Clone Repository
-Buka terminal atau command prompt, lalu jalankan perintah berikut untuk mengunduh kode sumber:
+### 2. Langkah Instalasi
 
+**Clone Repository**
+Buka terminal dan jalankan perintah:
 ```bash
-git clone [https://github.com/Ezra21ID/cashflow-app-uas.git](https://github.com/Ezra21ID/cashflow-app-uas.git)
+git clone https://github.com/Ezra21ID/cashflow-app-uas.git
 cd cashflow-app-uas
+```
 
+Install Dependencies Unduh semua paket yang dibutuhkan (firebase_core, flutter_svg, google_fonts, dll).   
+```bash
+flutter pub get
+```
+
+Jalankan Aplikasi Pastikan emulator sudah berjalan atau HP terhubung via USB.
+```bash
+flutter run
+```
+---
 ## 🔗 API Endpoint & Database Structure
 
 Aplikasi ini menggunakan **Firebase Realtime Database** sebagai *Backend-as-a-Service*. Alih-alih REST API statis, aplikasi berkomunikasi langsung dengan database melalui protokol aman (Secure WebSockets/HTTPS).
@@ -50,6 +61,7 @@ Aplikasi ini menggunakan **Firebase Realtime Database** sebagai *Backend-as-a-Se
 https://cashflowapp-aad0b-default-rtdb.asia-southeast1.firebasedatabase.app/
 
 ### **Endpoint Paths**
+
 
 Untuk menjamin keamanan dan privasi data (Multi-tenancy), struktur endpoint dibuat hierarkis berdasarkan UID pengguna.
 
@@ -75,5 +87,19 @@ Setiap transaksi disimpan dalam format JSON berikut:
     "date": "2025-12-12T10:00:00.000"
   }
 }
-
-
+```
+📂 Struktur Proyek
+```Plaintext
+lib/
+├── page/
+│   ├── login.dart            # Halaman Login
+│   ├── sign_up.dart          # Halaman Registrasi
+│   ├── dashboard.dart        # Halaman Utama (List & Filter)
+│   ├── add_expanse_page.dart # Form Tambah Transaksi
+│   └── chart_page.dart       # Halaman Analitik
+├── services/
+│   ├── auth_service.dart     # Logika Autentikasi Firebase
+│   ├── database_service.dart # Logika CRUD Realtime Database
+│   └── transaction_model.dart# Model Data Transaksi
+└── main.dart                 # Entry Point & Konfigurasi App
+```
