@@ -1,5 +1,8 @@
+
 import 'package:coba/page/dashboard.dart';
 import 'package:coba/page/sign_up.dart';
+import 'package:coba/services/auth_service.dart'; // Import Auth Service
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,13 +11,66 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _MyAppState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _MyAppState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
+  // 1. Tambahkan Controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   bool _obscureText = true;
+  bool _isLoading = false; // Untuk indikator loading
 
   static const Color primary = Color(0xFF316D69);
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // 2. Fungsi Login
+  void _login() async {
+    // Validasi sederhana
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in email and password")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Panggil Service Firebase
+    User? user = await AuthService().signIn(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    setState(() => _isLoading = false);
+
+    if (user != null) {
+      // BERHASIL LOGIN -> Ke Dashboard
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const FinanceHomePage()),
+        );
+      }
+    } else {
+      // GAGAL LOGIN
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login Failed. Check email/password."),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +78,6 @@ class _MyAppState extends State<LoginPage> {
       body: SingleChildScrollView(
         child: Stack(
           children: [
-            // SVG hanya di bagian atas
             Align(
               alignment: Alignment.topCenter,
               child: SizedBox(
@@ -35,11 +90,11 @@ class _MyAppState extends State<LoginPage> {
             ),
             SafeArea(
               child: Container(
-                margin: EdgeInsets.only(left: 20, right: 20),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 60),
+                    const SizedBox(height: 60),
                     Text(
                       "Login",
                       style: GoogleFonts.poppins(
@@ -56,7 +111,7 @@ class _MyAppState extends State<LoginPage> {
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 80),
+                    const SizedBox(height: 80),
 
                     Text(
                       "Email",
@@ -65,18 +120,22 @@ class _MyAppState extends State<LoginPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    // INPUT EMAIL
                     TextField(
+                      controller: _emailController, // Sambungkan Controller
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: BorderSide.none,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        hint: Text("Enter Your Name"),
+                        hintText: "Enter Your Email",
                         filled: true,
-                        fillColor: Colors.grey[120],
+                        fillColor: Colors.grey[200], // Perbaikan warna
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
+
                     Text(
                       "Password",
                       style: GoogleFonts.poppins(
@@ -84,9 +143,10 @@ class _MyAppState extends State<LoginPage> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+                    // INPUT PASSWORD
                     TextField(
+                      controller: _passwordController, // Sambungkan Controller
                       obscureText: _obscureText,
-
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: BorderSide.none,
@@ -94,190 +154,76 @@ class _MyAppState extends State<LoginPage> {
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureText
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                            _obscureText ? Icons.visibility_off : Icons.visibility,
                             color: Colors.black,
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscureText = !_obscureText; // toggle password
+                              _obscureText = !_obscureText;
                             });
                           },
                         ),
-                        hint: Text(
-                          "*****************",
-                          style: GoogleFonts.poppins(),
-                        ),
+                        hintText: "*****************",
                         filled: true,
-                        fillColor: Colors.grey[120],
+                        fillColor: Colors.grey[200],
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
+
                     Container(
                       alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.only(right: 18),
+                      margin: const EdgeInsets.only(right: 18),
                       child: Text(
                         "Forget Password?",
                         style: GoogleFonts.poppins(fontSize: 12),
                       ),
                     ),
-                    SizedBox(height: 15),
-                    Container(
+                    const SizedBox(height: 15),
+
+                    // TOMBOL LOGIN
+                    SizedBox(
                       width: double.infinity,
+                      height: 50,
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FinanceHomePage(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Login",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        onPressed: _isLoading ? null : _login, // Panggil fungsi _login
                         style: ElevatedButton.styleFrom(
                           backgroundColor: primary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadiusGeometry.circular(12),
+                            borderRadius: BorderRadius.circular(12),
                           ),
+                        ),
+                        child: _isLoading
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text(
+                          "Login",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey, // warna garis
-                            thickness: 1, // ketebalan garis
-                            endIndent: 10, // jarak ke teks
-                          ),
-                        ),
-                        Text("Or Login With", style: TextStyle(fontSize: 14)),
-                        Expanded(
-                          child: Divider(
-                            color: Colors.grey,
-                            thickness: 1,
-                            indent: 10, // jarak ke teks
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Container(
-                      height: 60,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Action when button is pressed
-                          print('Continue with Google pressed');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            side: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          elevation: 2,
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/ic_google.svg', // Path ke file SVG
-                              width: 24,
-                              height: 24,
-                              semanticsLabel: 'Google Icon',
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Continue With Google',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 15),
-                    Container(
-                      height: 60,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Action when button is pressed
-                          print('Continue with Apple pressed');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.black,
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            side: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          elevation: 2,
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/ic_apple.svg', // Path ke file SVG
-                              width: 24,
-                              height: 24,
-                              semanticsLabel: 'Google Icon',
-                            ),
-                            const SizedBox(width: 12),
-                            const Text(
-                              'Continue With Apple',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 5),
+
+                    // --- BAGIAN TOMBOL GOOGLE & APPLE DIHAPUS ---
+
+                    const SizedBox(height: 30), // Memberi sedikit jarak tambahan
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Didn't have an account?"),
+                        const Text("Didn't have an account?"),
                         TextButton(
                           onPressed: () {
                             Navigator.push(
-                              // ← Sekarang akan bekerja
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => SignUpPage(),
-                              ),
+                              MaterialPageRoute(builder: (context) => const SignUpPage()),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             "Sign Up",
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                            ),
+                            style: TextStyle(decoration: TextDecoration.underline),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "329424993558",
+    "firebase_url": "https://cashflowapp-aad0b-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "cashflowapp-aad0b",
+    "storage_bucket": "cashflowapp-aad0b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329424993558:android:7773959e37c2617a27e437",
+        "android_client_info": {
+          "package_name": "com.example.coba"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329424993558-8sb4k62q9i07l3okhhhfilmmodcvihqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj1bSs1yfIo4tEZat0X4AJ7KDS63efrIQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329424993558-8sb4k62q9i07l3okhhhfilmmodcvihqo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
