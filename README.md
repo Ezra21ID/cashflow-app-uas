@@ -23,31 +23,6 @@ Aplikasi ini memungkinkan pengguna untuk mencatat pemasukan dan pengeluaran seca
 * **Architecture:** Separation of Concerns (UI, Service, Model)
 
 ---
-# 💰 CashFlow - Expense Tracker App
-
-**CashFlow** adalah aplikasi manajemen keuangan pribadi berbasis mobile yang dibangun menggunakan **Flutter** dan terintegrasi dengan **Firebase Realtime Database**. Aplikasi ini dikembangkan untuk memenuhi tugas **Ujian Akhir Semester (UAS)** mata kuliah **Mobile Programming**.
-
-Aplikasi ini memungkinkan pengguna untuk mencatat pemasukan dan pengeluaran secara *real-time*, melihat visualisasi data, serta memfilter riwayat transaksi untuk analisis keuangan yang lebih baik.
-
-## 📱 Fitur Utama
-
-* **User Authentication:** Login dan Sign Up aman menggunakan Email & Password (Firebase Auth).
-* **Real-time Dashboard:** Sinkronisasi data otomatis antar perangkat tanpa perlu refresh manual.
-* **Transaction Management:**
-    * Menambah Pemasukan (Income) dan Pengeluaran (Expense).
-    * Mendukung berbagai kategori (Groceries, Transportation, Salary, dll).
-* **Search & Filter:** Fitur pencarian berdasarkan judul transaksi dan filter berdasarkan tipe (All/Income/Expense).
-* **Data Privacy:** Isolasi data antar pengguna (User A tidak bisa melihat data User B).
-* **Visual Analytics:** Grafik sederhana untuk melihat proporsi pengeluaran.
-
-## 🛠️ Teknologi yang Digunakan
-
-* **Frontend:** Flutter SDK (Dart)
-* **Backend:** Firebase Realtime Database
-* **Authentication:** Firebase Auth
-* **Architecture:** Separation of Concerns (UI, Service, Model)
-
----
 
 ## 🚀 Cara Instalasi & Menjalankan Aplikasi
 
@@ -100,4 +75,5 @@ Setiap transaksi disimpan dalam format JSON berikut:
     "date": "2025-12-12T10:00:00.000"
   }
 }
+
 
